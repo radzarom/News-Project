@@ -3,6 +3,7 @@ const db = require(`${__dirname}/../db/connection.js`);
 const seed = require(`${__dirname}/../db/seeds/seed.js`);
 const data = require(`${__dirname}/../db/data/test-data/index.js`);
 const app = require(`${__dirname}/../db/app.js`);
+require('jest-sorted');
 
 
 beforeEach(() => {
@@ -60,17 +61,14 @@ describe('app.js test suite', () => {
             })
         });
 
-        test('responds with arrticles in date descending order', () => {
+        test('responds with articles in date descending order', () => {
             return request(app)
             .get('/api/articles')
             .expect(200)
             .then(({body: {articles}}) => {
-                expect(articles).toHaveLength(12);
-                
-                for(let i = 0; i < articles.length - 1; i++) {
-
-                    expect(new Date(articles[i].created_at).getTime()).toBeGreaterThanOrEqual(new Date(articles[i+1].created_at).getTime())
-                }
+                expect(articles).toBeSortedBy('created_at', {
+                    descending: true
+                })             
             })
         });
     });
