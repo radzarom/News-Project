@@ -1,5 +1,6 @@
 const express = require('express');
-const {getTopics, getArticles, getArticleByID} = require(`${__dirname}/controller.js`);
+const {getTopics, getArticles, getArticleByID, getCommentsByArticleID} = require(`${__dirname}/controller.js`);
+
 
 const app = express()
 app.use(express.json());
@@ -9,6 +10,8 @@ app.get('/api/topics', getTopics);
 app.get('/api/articles', getArticles);
 
 app.get('/api/articles/:article_id', getArticleByID);
+
+app.get('/api/articles/:article_id/comments', getCommentsByArticleID)
 
 
 app.use((request, response, next) => {
@@ -22,7 +25,7 @@ app.use((error, request, response, next) => {
 
         response.status(error.status).send({msg: error.msg})
     }
-})
+}) 
 
 app.use((error, request, response, next) => {
     console.log(error);

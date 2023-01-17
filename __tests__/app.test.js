@@ -16,7 +16,7 @@ afterAll(() => {
 
 
 describe('app.js test suite', () => {
-    test('responds with 404 if invalid path used', () => {
+    test('responds with 404 error if invalid path used', () => {
         return request(app)
         .get('/not-a-path')
         .expect(404)
@@ -72,7 +72,7 @@ describe('app.js test suite', () => {
             })
         });
     });
-
+    
     describe('GET /api/articles/:article_id', () => {
         test('responds with one article object with the relevant properties', () => {
             return request(app)
@@ -100,4 +100,32 @@ describe('app.js test suite', () => {
             })
         });
     });
+
+    describe('GET /api/articles/article_id/comments', () => {
+        test('responds with an array of comments for a given article ID', () => {
+            return request(app)
+            .get('/api/articles/1/comments')
+            .expect(200)
+            .then(({body: {comments}}) => {
+                expect(comments).toHaveLength(11);
+                comments.forEach((comment) => {
+                    expect(comment).toHaveProperty('comment_id', expect.any(Number));
+                    expect(comment).toHaveProperty('votes', expect.any(Number));
+                    expect(comment).toHaveProperty('created_at', expect.any(String));
+                    expect(comment).toHaveProperty('article_id', expect.any(Number));
+                    expect(comment).toHaveProperty('author', expect.any(String));
+                    expect(comment).toHaveProperty('body', expect.any(String));
+                })       
+            })
+        });
+        
+        test('responds with 404 error if the article has no comments', () => {
+            return request(app)
+            .get('/api/articles/4/comments')
+            .expect(404)
+            .then(({body: {msg}}) => {
+                
+                expect(msg).toBe('There are no comments for this article or no such article exists')
+
+        })
 });
