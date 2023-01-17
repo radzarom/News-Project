@@ -19,4 +19,21 @@ const retrieveArticles = () => {
     return db.query(sqlQuery).then((results) => results.rows)
 }
 
-module.exports = {retrieveTopics, retrieveArticles}
+const retrieveArticleByID = (article_id) => {
+
+    const sqlQuery = `SELECT * FROM articles
+                        WHERE article_id = $1`
+
+    return db.query(sqlQuery, [article_id]).then((results) => {
+    
+        if(results.rows.length === 0) {
+
+            return Promise.reject({status: 404, msg: 'No article with this ID found'})
+        } 
+        
+        return results.rows[0]
+
+    })
+}
+
+module.exports = {retrieveTopics, retrieveArticles, retrieveArticleByID}

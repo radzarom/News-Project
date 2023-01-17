@@ -72,4 +72,32 @@ describe('app.js test suite', () => {
             })
         });
     });
+
+    describe('GET /api/articles/:article_id', () => {
+        test('responds with one article object with the relevant properties', () => {
+            return request(app)
+            .get('/api/articles/3')
+            .expect(200)
+            .then(({body: {article}}) => {
+               
+                expect(article).toHaveProperty('author', expect.any(String));
+                expect(article).toHaveProperty('title', expect.any(String));
+                expect(article).toHaveProperty('article_id', expect.any(Number));
+                expect(article).toHaveProperty('topic', expect.any(String));
+                expect(article).toHaveProperty('created_at', expect.any(String));
+                expect(article).toHaveProperty('votes', expect.any(Number));
+                expect(article).toHaveProperty('article_img_url', expect.any(String));
+            })
+        });
+
+        test('responds with a 404 error if ID is not in the database', () => {
+            return request(app)
+            .get('/api/articles/309')
+            .expect(404)
+            .then(({body}) => {
+               
+                expect(body).toHaveProperty('msg', 'No article with this ID found');
+            })
+        });
+    });
 });

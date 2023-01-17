@@ -1,4 +1,4 @@
-const {retrieveTopics, retrieveArticles} = require(`${__dirname}/model.js`)
+const {retrieveTopics, retrieveArticles, retrieveArticleByID} = require(`${__dirname}/model.js`)
 
 
 const getTopics = (request, response, next) => {
@@ -23,4 +23,17 @@ const getArticles = (request, response, next) => {
     })
 }
 
-module.exports = {getTopics, getArticles}
+const getArticleByID = (request, response, next) => {
+    const {article_id} = request.params
+
+    retrieveArticleByID(article_id).then((article) => {
+        
+        response.status(200).send({article: article})
+    })
+    .catch((error) => {
+
+        next(error)
+    })
+}
+
+module.exports = {getTopics, getArticles, getArticleByID}
