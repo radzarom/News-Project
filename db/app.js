@@ -1,5 +1,5 @@
 const express = require('express');
-const {getTopics, getArticles, getArticleByID, getCommentsByArticleID} = require(`${__dirname}/controller.js`);
+const {getTopics, getArticles, getArticleByID, getCommentsByArticleID, postCommentByArticleID} = require(`${__dirname}/controller.js`);
 
 
 const app = express()
@@ -11,7 +11,9 @@ app.get('/api/articles', getArticles);
 
 app.get('/api/articles/:article_id', getArticleByID);
 
-app.get('/api/articles/:article_id/comments', getCommentsByArticleID)
+app.get('/api/articles/:article_id/comments', getCommentsByArticleID);
+
+app.post('/api/articles/:article_id/comments', postCommentByArticleID)
 
 
 app.use((request, response, next) => {
@@ -25,6 +27,7 @@ app.use((error, request, response, next) => {
 
         response.status(error.status).send({msg: error.msg})
     }
+    else{next(error)}
 }) 
 
 app.use((error, request, response, next) => {

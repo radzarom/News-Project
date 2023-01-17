@@ -1,4 +1,5 @@
 const db = require(`${__dirname}/connection.js`)
+const format = require('pg-format')
 
 
 const retrieveTopics = () => {
@@ -52,5 +53,32 @@ const retrieveCommentsByArticleID = (article_id) => {
     })
 }
 
-module.exports = {retrieveTopics, retrieveArticles, retrieveArticleByID, retrieveCommentsByArticleID}
+const addCommentByID = (article_id, commentData) => {
+
+    for(let prop in commentData) {
+
+        if(!['username', 'body'].includes(prop)){
+            return Promise.reject({status: 400, msg: 'Invalid column names'})
+        }
+    }
+    
+    const {username, body} = commentData
+
+    const values = [[body, article_id, username, 0, 'now()']]
+        
+    const sqlQuery = format(`INSERT INTO comments
+                            (body, article_id, author, votes, created_at)
+                            VALUES
+                            %L
+                            RETURNING *`,
+                            values)
+
+    return db.query(sqlQuery).then((results) => {
+        
+        return results.rows[0];
+    })
+    
+}
+
+module.exports = {retrieveTopics, retrieveArticles, retrieveArticleByID, retrieveCommentsByArticleID, addCommentByID}
 
