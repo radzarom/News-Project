@@ -1,4 +1,4 @@
-const {retrieveTopics} = require(`${__dirname}/model.js`)
+const {retrieveTopics, retrieveArticles} = require(`${__dirname}/model.js`)
 
 
 const getTopics = (request, response, next) => {
@@ -12,4 +12,15 @@ const getTopics = (request, response, next) => {
     })
 }
 
-module.exports = {getTopics}
+const getArticles = (request, response, next) => {
+
+    retrieveArticles().then((articles) => {
+
+        response.status(200).send({articles: articles})
+    })
+    .catch((err) => {
+        next(err);
+    })
+}
+
+module.exports = {getTopics, getArticles}
