@@ -15,19 +15,22 @@ afterAll(() => {
 
 
 describe('app.js test suite', () => {
+    test('responds with 404 if invalid path used', () => {
+        return request(app)
+        .get('/not-a-path')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Path not found');
+        })
+    });
 
     describe('GET /api/topics', () => {
-        test('responds with status code 200', () => {
-            return request(app)
-            .get('/api/topics')
-            .expect(200)
-        });
-
         test('responds with an array of topic objects with slug and description properties', () => {
             return request(app)
             .get('/api/topics')
             .expect(200)
             .then(({body}) => {
+                expect(body.topics).toHaveLength(3);
                 body.topics.forEach((topic) => {
                     expect(topic).toHaveProperty('slug', expect.any(String));
                     expect(topic).toHaveProperty('description', expect.any(String));
@@ -36,8 +39,5 @@ describe('app.js test suite', () => {
             })
         });
 
-        // test('responds with 404 if ', () => {
-            
-        // });
     });
 });
