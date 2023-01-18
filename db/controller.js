@@ -59,6 +59,9 @@ const patchArticleByID = (request, response, next) => {
 
         response.status(200).send({article: article})
     })
+    .catch((error) => {
+        next(error)
+    })
 }
 
 module.exports = {getTopics, getArticles, getArticleByID, getCommentsByArticleID, patchArticleByID}

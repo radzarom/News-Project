@@ -132,23 +132,36 @@ describe('app.js test suite', () => {
     })
 
     describe('PATCH /api/articles/:article_id', () => {
-        // test('increments the votes for an article and responds with the updated article object', () => {
-        //     return request(app)
-        //     .patch('/api/articles/2')
-        //     .send({
-        //         inc_votes: 5
-        //     })
-        //     .expect(200)
-        //     .then(({body: {article}}) => {
+        test('increments the votes for an article and responds with the updated article object', () => {
+            return request(app)
+            .patch('/api/articles/2')
+            .send({
+                inc_votes: 5
+            })
+            .expect(200)
+            .then(({body: {article}}) => {
                
-        //         expect(article).toHaveProperty('votes', 5);
-        //         expect(article).toHaveProperty('article_id', 2);
-        //         expect(article).toHaveProperty('author', expect.any(String));
-        //         expect(article).toHaveProperty('title', expect.any(String));
-        //         expect(article).toHaveProperty('topic', expect.any(String));
-        //         expect(article).toHaveProperty('created_at', expect.any(String));
-        //         expect(article).toHaveProperty('article_img_url', expect.any(String));
-        //     })
-        // });
+                expect(article).toHaveProperty('votes', 5);
+                expect(article).toHaveProperty('article_id', 2);
+                expect(article).toHaveProperty('author', expect.any(String));
+                expect(article).toHaveProperty('title', expect.any(String));
+                expect(article).toHaveProperty('topic', expect.any(String));
+                expect(article).toHaveProperty('created_at', expect.any(String));
+                expect(article).toHaveProperty('article_img_url', expect.any(String));
+            })
+        });
+
+        test('responds with 400 error if votes not sent on inc_votes property', () => {
+            return request(app)
+            .patch('/api/articles/2')
+            .send({
+                inc_tes: 5
+            })
+            .expect(400)
+            .then(({body: {msg}}) => {
+               
+                expect(msg).toBe('Votes data not sent in correct format');
+            })
+        });
     });
 })
