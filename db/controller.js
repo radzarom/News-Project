@@ -1,4 +1,4 @@
-const {retrieveTopics, retrieveArticles, retrieveArticleByID, retrieveCommentsByArticleID} = require(`${__dirname}/model.js`)
+const {retrieveTopics, retrieveArticles, retrieveArticleByID, retrieveCommentsByArticleID, addCommentByID} = require(`${__dirname}/model.js`)
 
 
 
@@ -25,7 +25,7 @@ const getArticles = (request, response, next) => {
 }
 
 const getArticleByID = (request, response, next) => {
-    const {article_id} = request.params
+    const {article_id} = request.params;
 
     retrieveArticleByID(article_id).then((article) => {
         
@@ -39,7 +39,7 @@ const getArticleByID = (request, response, next) => {
 }
 
 const getCommentsByArticleID = (request, response, next) => {
-    const {article_id} = request.params
+    const {article_id} = request.params;
 
     retrieveCommentsByArticleID(article_id).then((comments) => {
 
@@ -51,5 +51,18 @@ const getCommentsByArticleID = (request, response, next) => {
     })
 }
 
-module.exports = {getTopics, getArticles, getArticleByID, getCommentsByArticleID}
+const postCommentByArticleID = (request, response, next) => {
+    const {article_id} = request.params;
+    const {body} = request;
+
+    addCommentByID(article_id, body).then((comment) => {
+        
+        response.status(201).send({comment: comment});
+    })
+    .catch((error) => {
+        next(error)
+    })
+}
+
+module.exports = {getTopics, getArticles, getArticleByID, getCommentsByArticleID, postCommentByArticleID}
 

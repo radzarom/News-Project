@@ -127,5 +127,103 @@ describe('app.js test suite', () => {
                 
                 expect(msg).toBe('There are no comments for this article or no such article exists')
 
+            })
         })
-});
+    }) 
+
+    describe('POST /api/articles/:article_id/comments', () => {
+        test('adds comment to database with relevant article ID', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send({
+                username: 'lurker',
+                body: '#metoo'
+            })
+            .expect(201)
+            .then(({body: {comment}}) => {
+                
+                expect(comment).toHaveProperty('comment_id', expect.any(Number));
+                expect(comment).toHaveProperty('votes', 0);
+                expect(comment).toHaveProperty('created_at', expect.any(String));
+                expect(comment).toHaveProperty('article_id', 1);
+                expect(comment).toHaveProperty('author', 'lurker');
+                expect(comment).toHaveProperty('body', '#metoo');
+            })
+        });
+
+        test('responds with 400 error when sending properties that are not valid table columns', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send({
+                username: 'lurker',
+                bodyyyy: 'yes'
+            })
+            .expect(400)
+            .then(({body: {msg}}) => {
+                
+                expect(msg).toBe('Invalid column names')
+                
+            })
+        });
+
+        test('responds with 400 error when sent invalid data type in username', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send({
+                username: 123,
+                body: 'hello'
+            })
+            .expect(400)
+            .then(({body: {msg}}) => {
+                
+                expect(msg).toBe('Invalid value for username')
+                
+            })
+        });
+
+        test('responds with 400 error when sent invalid data type in body', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send({
+                username: 'lurker',
+                body: 123
+            })
+            .expect(400)
+            .then(({body: {msg}}) => {
+                
+                expect(msg).toBe('Invalid value for body')
+                
+            })
+        });
+
+        test('responds with 404 error when given an ID which does not exist', () => {
+            return request(app)
+            .post('/api/articles/1001/comments')
+            .send({
+                username: 'lurker',
+                body: '123'
+            })
+            .expect(404)
+            .then(({body: {msg}}) => {
+                
+                expect(msg).toBe('This ID does not exist')
+                
+            })
+        });
+
+        test('responds with 400 error if given ID which is not the right data type', () => {
+            return request(app)
+            .post('/api/articles/oops/comments')
+            .send({
+                username: 'lurker',
+                body: '123'
+            })
+            .expect(400)
+            .then(({body: {msg}}) => {
+                
+                expect(msg).toBe('The ID used is not the correct data type')
+                
+            })
+        });
+    });
+})
