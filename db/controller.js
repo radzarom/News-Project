@@ -56,7 +56,7 @@ const patchArticleByID = (request, response, next) => {
     const {body} = request
 
     updateArticleByID(article_id, body).then((article) => {
-
+        
         response.status(200).send({article: article})
     })
     .catch((error) => {

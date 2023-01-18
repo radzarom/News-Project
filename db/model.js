@@ -54,6 +54,11 @@ const retrieveCommentsByArticleID = (article_id) => {
 
 const updateArticleByID = (article_id, body) => {
 
+    if(!/^\d+$/.test(article_id)) {
+
+        return Promise.reject({status: 404, msg: 'The article ID is the wrong data type'})
+    }
+
     if(!body.hasOwnProperty('inc_votes') || typeof body.inc_votes != 'number') {
         
         return Promise.reject({status: 400, msg: 'Votes data not sent in correct format'})
@@ -66,9 +71,12 @@ const updateArticleByID = (article_id, body) => {
                         WHERE article_id = $2
                         RETURNING *`
 
-    console.log(sqlQuery);
-
     return db.query(sqlQuery, [inc_votes, article_id]).then((results) => {
+
+        if(results.rows[0] === undefined) {
+
+            return Promise.reject({status: 404, msg:'No article with that ID exists'})
+        }
 
         return results.rows[0];
     })
