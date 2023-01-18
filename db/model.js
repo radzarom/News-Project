@@ -55,11 +55,22 @@ const retrieveCommentsByArticleID = (article_id) => {
 
 const addCommentByID = (article_id, commentData) => {
 
+    if(!/^\d+$/.test(article_id)) {
+
+        return Promise.reject({status: 400, msg:'The ID used is not the correct data type'})
+    }
+
     for(let prop in commentData) {
 
         if(!['username', 'body'].includes(prop)){
             return Promise.reject({status: 400, msg: 'Invalid column names'})
         }
+
+     
+        if(typeof commentData[prop] != 'string' || commentData[prop] === '') {
+            return Promise.reject({status:400, msg: `Invalid value for ${prop}` })
+        }
+        
     }
     
     const {username, body} = commentData
@@ -74,7 +85,7 @@ const addCommentByID = (article_id, commentData) => {
                             values)
 
     return db.query(sqlQuery).then((results) => {
-        
+
         return results.rows[0];
     })
     

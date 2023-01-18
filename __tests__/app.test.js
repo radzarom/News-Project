@@ -165,5 +165,65 @@ describe('app.js test suite', () => {
                 
             })
         });
+
+        test('responds with 400 error when sent invalid data type in username', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send({
+                username: 123,
+                body: 'hello'
+            })
+            .expect(400)
+            .then(({body: {msg}}) => {
+                
+                expect(msg).toBe('Invalid value for username')
+                
+            })
+        });
+
+        test('responds with 400 error when sent invalid data type in body', () => {
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send({
+                username: 'lurker',
+                body: 123
+            })
+            .expect(400)
+            .then(({body: {msg}}) => {
+                
+                expect(msg).toBe('Invalid value for body')
+                
+            })
+        });
+
+        test('responds with 404 error when given an ID which does not exist', () => {
+            return request(app)
+            .post('/api/articles/1001/comments')
+            .send({
+                username: 'lurker',
+                body: '123'
+            })
+            .expect(404)
+            .then(({body: {msg}}) => {
+                
+                expect(msg).toBe('This ID does not exist')
+                
+            })
+        });
+
+        test('responds with 400 error if given ID which is not the right data type', () => {
+            return request(app)
+            .post('/api/articles/oops/comments')
+            .send({
+                username: 'lurker',
+                body: '123'
+            })
+            .expect(400)
+            .then(({body: {msg}}) => {
+                
+                expect(msg).toBe('The ID used is not the correct data type')
+                
+            })
+        });
     });
 })
