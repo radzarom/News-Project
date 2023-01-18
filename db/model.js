@@ -91,5 +91,36 @@ const addCommentByID = (article_id, commentData) => {
     
 }
 
-module.exports = {retrieveTopics, retrieveArticles, retrieveArticleByID, retrieveCommentsByArticleID, addCommentByID}
+const updateArticleByID = (article_id, body) => {
+
+    if(!/^\d+$/.test(article_id)) {
+
+        return Promise.reject({status: 404, msg: 'The article ID is the wrong data type'})
+    }
+
+    if(!body.hasOwnProperty('inc_votes') || typeof body.inc_votes != 'number') {
+        
+        return Promise.reject({status: 400, msg: 'Votes data not sent in correct format'})
+    }
+
+    const {inc_votes} = body
+
+    const sqlQuery = `UPDATE articles
+                        SET votes = votes + $1
+                        WHERE article_id = $2
+                        RETURNING *`
+
+    return db.query(sqlQuery, [inc_votes, article_id]).then((results) => {
+
+        if(results.rows[0] === undefined) {
+
+            return Promise.reject({status: 404, msg:'No article with that ID exists'})
+        }
+
+        return results.rows[0];
+    })
+}
+
+module.exports = {retrieveTopics, retrieveArticles, retrieveArticleByID, retrieveCommentsByArticleID, addCommentByID, updateArticleByID}
+
 

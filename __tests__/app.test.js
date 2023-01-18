@@ -129,6 +129,7 @@ describe('app.js test suite', () => {
 
             })
         })
+
     }) 
 
     describe('POST /api/articles/:article_id/comments', () => {
@@ -222,7 +223,81 @@ describe('app.js test suite', () => {
             .then(({body: {msg}}) => {
                 
                 expect(msg).toBe('The ID used is not the correct data type')
-                
+    })
+
+    describe('PATCH /api/articles/:article_id', () => {
+        test('responds with the updated article object', () => {
+            return request(app)
+            .patch('/api/articles/2')
+            .send({
+                inc_votes: 5
+            })
+            .expect(200)
+            .then(({body: {article}}) => {
+               
+                expect(article).toHaveProperty('votes', 5);
+                expect(article).toHaveProperty('article_id', 2);
+                expect(article).toHaveProperty('author', expect.any(String));
+                expect(article).toHaveProperty('title', expect.any(String));
+                expect(article).toHaveProperty('topic', expect.any(String));
+                expect(article).toHaveProperty('created_at', expect.any(String));
+                expect(article).toHaveProperty('article_img_url', expect.any(String));
+            })    
+        });
+
+        test('the change has been committed to the database', () => {
+            return request(app)
+                .patch('/api/articles/2')
+                .send({
+                    inc_votes: 5
+                })
+                .expect(200)
+                .then(() => {
+                    return request(app)
+                    .get('/api/articles/2')
+                    .expect(200)
+                    .then(({body: {article}}) => {
+                        expect(article).toHaveProperty('votes', 5);
+                    })
+                })
+        });
+
+        test('responds with 400 error if votes not sent on inc_votes property', () => {
+            return request(app)
+            .patch('/api/articles/2')
+            .send({
+                inc_tes: 5
+            })
+            .expect(400)
+            .then(({body: {msg}}) => {
+               
+                expect(msg).toBe('Votes data not sent in correct format');
+            })
+        });
+
+        test('responds with 404 error if article with that ID isnt found', () => {
+            return request(app)
+            .patch('/api/articles/200')
+            .send({
+                inc_votes: 5
+            })
+            .expect(404)
+            .then(({body: {msg}}) => {
+
+                expect(msg).toBe('No article with that ID exists')
+            })
+        });
+
+        test('responds with 400 error if article ID is the wrong data type', () => {
+            return request(app)
+            .patch('/api/articles/abc')
+            .send({
+                inc_votes: 5
+            })
+            .expect(404)
+            .then(({body: {msg}}) => {
+
+                expect(msg).toBe('The article ID is the wrong data type')
             })
         });
     });

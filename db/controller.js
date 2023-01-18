@@ -1,4 +1,5 @@
-const {retrieveTopics, retrieveArticles, retrieveArticleByID, retrieveCommentsByArticleID, addCommentByID} = require(`${__dirname}/model.js`)
+const {retrieveTopics, retrieveArticles, retrieveArticleByID, retrieveCommentsByArticleID, addCommentByID, updateArticleByID} = require(`${__dirname}/model.js`)
+
 
 
 
@@ -64,5 +65,19 @@ const postCommentByArticleID = (request, response, next) => {
     })
 }
 
-module.exports = {getTopics, getArticles, getArticleByID, getCommentsByArticleID, postCommentByArticleID}
+const patchArticleByID = (request, response, next) => {
+    const {article_id} = request.params;
+    const {body} = request
+
+    updateArticleByID(article_id, body).then((article) => {
+        
+        response.status(200).send({article: article})
+    })
+    .catch((error) => {
+        next(error)
+    })
+}
+
+module.exports = {getTopics, getArticles, getArticleByID, getCommentsByArticleID, postCommentByArticleID, patchArticleByID}
+
 

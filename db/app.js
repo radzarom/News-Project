@@ -1,6 +1,7 @@
 const { response } = require('express');
 const express = require('express');
-const {getTopics, getArticles, getArticleByID, getCommentsByArticleID, postCommentByArticleID} = require(`${__dirname}/controller.js`);
+const {getTopics, getArticles, getArticleByID, getCommentsByArticleID, postCommentByArticleID, patchArticleByID} = require(`${__dirname}/controller.js`);
+
 
 
 const app = express()
@@ -15,6 +16,8 @@ app.get('/api/articles/:article_id', getArticleByID);
 app.get('/api/articles/:article_id/comments', getCommentsByArticleID);
 
 app.post('/api/articles/:article_id/comments', postCommentByArticleID)
+
+app.patch('/api/articles/:article_id', patchArticleByID)
 
 
 app.use((request, response, next) => {
@@ -43,7 +46,9 @@ app.use((error, request, response, next) => {
 
                 response.status(404).send({msg: 'This ID does not exist'})
     }
-    else{next(error)}
+    else {
+        next(error)
+    }
 }) 
 
 app.use((error, request, response, next) => {
