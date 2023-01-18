@@ -52,5 +52,18 @@ const retrieveCommentsByArticleID = (article_id) => {
     })
 }
 
-module.exports = {retrieveTopics, retrieveArticles, retrieveArticleByID, retrieveCommentsByArticleID}
+const updateArticleByID = (article_id, body) => {
+
+    const {inc_votes} = body
+
+    const sqlQuery = `UPDATE articles
+                        SET votes = votes + $1
+                        WHERE article_id = $2`
+
+                        console.log(sqlQuery);
+
+    return db.query(sqlQuery, [inc_votes, article_id])
+}
+
+module.exports = {retrieveTopics, retrieveArticles, retrieveArticleByID, retrieveCommentsByArticleID, updateArticleByID}
 

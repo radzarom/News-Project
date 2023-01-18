@@ -127,5 +127,28 @@ describe('app.js test suite', () => {
                 
                 expect(msg).toBe('There are no comments for this article or no such article exists')
 
+            })
         })
-});
+    })
+
+    describe('PATCH /api/articles/:article_id', () => {
+        test('increments the votes for an article and responds with the updated article object', () => {
+            return request(app)
+            .patch('/api/articles/2')
+            .send({
+                inc_votes: 5
+            })
+            .expect(200)
+            .then(({body: {article}}) => {
+               
+                expect(article).toHaveProperty('votes', 5);
+                expect(article).toHaveProperty('article_id', 2);
+                expect(article).toHaveProperty('author', expect.any(String));
+                expect(article).toHaveProperty('title', expect.any(String));
+                expect(article).toHaveProperty('topic', expect.any(String));
+                expect(article).toHaveProperty('created_at', expect.any(String));
+                expect(article).toHaveProperty('article_img_url', expect.any(String));
+            })
+        });
+    });
+})
