@@ -164,6 +164,25 @@ const retrieveUsers = () => {
     })
 }
 
-module.exports = {retrieveTopics, retrieveArticles, retrieveArticleByID, retrieveCommentsByArticleID, addCommentByID, updateArticleByID, retrieveUsers}
+const removeCommentByID = (comment_id) => {
+
+    const sqlQueryCheckExists = `SELECT * FROM comments
+                                WHERE comment_id = $1`
+
+    const sqlQueryDelete = `DELETE FROM comments
+                        WHERE comment_id = $1`
+
+    return db.query(sqlQueryCheckExists, [comment_id]).then((results) => {
+
+        if(results.rows.length === 0) {
+            return Promise.reject({status: 404, msg: 'Could not delete comment with this ID as it did not exist'})
+        }
+        
+        return db.query(sqlQueryDelete, [comment_id])
+    })
+
+}
+
+module.exports = {retrieveTopics, retrieveArticles, retrieveArticleByID, retrieveCommentsByArticleID, addCommentByID, updateArticleByID, retrieveUsers, removeCommentByID}
 
 
