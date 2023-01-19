@@ -358,23 +358,23 @@ describe('app.js test suite', () => {
             })
         });
 
-        test('responds with 400 error when queried with an invalid topic', () => {
+        test('responds 200 and an empty array for a topic that does exist but doesnt have any articles yet', () => {
             return request(app)
-            .get('/api/articles?topic=treees')
-            .expect(400)
-            .then(({body: {msg}}) => {
-                
-                expect(msg).toBe('Invalid topic name used')
+            .get('/api/articles?topic=paper')
+            .expect(200)
+            .then(({body}) => {
+
+                expect(body.articles).toHaveLength(0);
             })
         });
 
-        test('responds with 404 error when no articles for that topic exist', () => {
+        test('responds with 400 error when queried with an invalid topic', () => {
             return request(app)
-            .get('/api/articles?topic=paper')
+            .get('/api/articles?topic=treees')
             .expect(404)
             .then(({body: {msg}}) => {
                 
-                expect(msg).toBe('No articles in this topic exist')
+                expect(msg).toBe('Invalid topic name used')
             })
         });
 

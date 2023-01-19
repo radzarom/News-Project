@@ -11,11 +11,14 @@ const retrieveTopics = () => {
 
 const retrieveArticles = (topic, sort_by = 'created_at', order = 'desc') => {
 
-    if(!['author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'article_img_url'].includes(sort_by)) {
+    const columnWhiteList = ['author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'article_img_url']
+    const orderWhiteList = ['asc', 'desc', 'ASC', 'DESC']
+
+    if(!columnWhiteList.includes(sort_by)) {
         return Promise.reject({status:400, msg: 'Invalid column name to sort by'})
     }
 
-    if(!['asc', 'desc', 'ASC', 'DESC'].includes(order)) {
+    if(!orderWhiteList.includes(order)) {
         return Promise.reject({status:400, msg: 'Invalid ordering request'})
     }
     
@@ -35,16 +38,12 @@ const retrieveArticles = (topic, sort_by = 'created_at', order = 'desc') => {
                 sqlQuery += ` WHERE articles.topic = $1`;
                 queryValues.push(topic);
             }
-            else return Promise.reject({status: 400, msg: 'Invalid topic name used'})
+            else return Promise.reject({status: 404, msg: 'Invalid topic name used'})
         }
         sqlQuery += ` GROUP BY articles.article_id`
         sqlQuery += ` ORDER BY ${sort_by} ${order}`
         
         return db.query(sqlQuery, queryValues).then((results) => {
-
-            if(results.rows.length === 0) {
-                return Promise.reject({status: 404, msg: 'No articles in this topic exist'})
-            }
             
             return results.rows
         })
