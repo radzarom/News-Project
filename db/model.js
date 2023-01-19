@@ -51,14 +51,17 @@ const retrieveArticles = (topic, sort_by = 'created_at', order = 'desc') => {
 }
 
 const retrieveArticleByID = (article_id) => {
-
-    const sqlQuery = `SELECT * FROM articles
-                        WHERE article_id = $1`
+    
+    const sqlQuery = `SELECT articles.* , CAST(COUNT(comments.article_id) AS INT) AS "comment_count"
+                        FROM articles
+                        LEFT JOIN comments ON comments.article_id = articles.article_id
+                        WHERE articles.article_id = $1
+                        GROUP BY articles.article_id`
 
     return db.query(sqlQuery, [article_id]).then((results) => {
     
         if(results.rows.length === 0) {
-
+            
             return Promise.reject({status: 404, msg: 'No article with this ID found'})
         } 
         

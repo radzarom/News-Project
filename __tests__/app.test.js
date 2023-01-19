@@ -413,5 +413,17 @@ describe('app.js test suite', () => {
                 expect(msg).toBe('Invalid ordering request')
             })
         });
-    })   
+    }) 
+    
+    describe('GET /api/articles/:article_id (comment count)', () => {
+        test('responds with article of a given ID with count of comments associated with that article', () => {
+            return request(app)
+            .get('/api/articles/3')
+            .expect(200)
+            .then(({body}) => {
+
+                expect(body.article).toHaveProperty('comment_count', 2)
+            })
+        });
+    });
 })
