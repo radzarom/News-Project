@@ -303,6 +303,22 @@ describe('app.js test suite', () => {
             })
         });
     });
+    
+    describe('GET /api/users', () => {
+        test('responds with an array of user objects wuth relevant fields', () => {
+            return request(app)
+            .get('/api/users')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.users).toHaveLength(4);
+                body.users.forEach((user) => {
+                    expect(user).toHaveProperty('username', expect.any(String));
+                    expect(user).toHaveProperty('name', expect.any(String));
+                    expect(user).toHaveProperty('avatar_url', expect.any(String));
+                })
+            })
+        });
+    });
 
     describe('GET /api/articles (queries)', () => {
         test('responds with articles filtered by topic', () => {
@@ -397,5 +413,5 @@ describe('app.js test suite', () => {
                 expect(msg).toBe('Invalid ordering request')
             })
         });
-    });
+    })   
 })
