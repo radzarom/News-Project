@@ -121,6 +121,16 @@ const updateArticleByID = (article_id, body) => {
     })
 }
 
-module.exports = {retrieveTopics, retrieveArticles, retrieveArticleByID, retrieveCommentsByArticleID, addCommentByID, updateArticleByID}
+const retrieveUsers = () => {
+
+    const sqlQuery = `SELECT * FROM users`
+
+    return db.query(sqlQuery).then((results) => {
+
+        return results.rows;
+    })
+}
+
+module.exports = {retrieveTopics, retrieveArticles, retrieveArticleByID, retrieveCommentsByArticleID, addCommentByID, updateArticleByID, retrieveUsers}
 
 
