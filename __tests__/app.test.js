@@ -303,7 +303,7 @@ describe('app.js test suite', () => {
             })
         });
     });
-
+    
     describe('GET /api/users', () => {
         test('responds with an array of user objects wuth relevant fields', () => {
             return request(app)
@@ -320,7 +320,102 @@ describe('app.js test suite', () => {
         });
     });
 
-    describe('GET /api/articles/:article_id (comment count', () => {
+    describe('GET /api/articles (queries)', () => {
+        test('responds with articles filtered by topic', () => {
+            return request(app)
+            .get('/api/articles?topic=mitch')
+            .expect(200)
+            .then(({body}) => {
+                
+                expect(body.articles).toHaveLength(11)
+                body.articles.forEach((article) =>{
+
+                    expect(article.topic).toBe('mitch');
+                })
+            })
+        });
+
+        test('responds with articles sorted by specified column', () => {
+            return request(app)
+            .get('/api/articles?sort_by=author')
+            .expect(200)
+            .then(({body}) => {
+                
+                expect(body.articles).toHaveLength(12)
+                expect(body.articles).toBeSortedBy('author', {
+                    descending: true
+                })
+            })
+        });
+
+        test('responds with articles sorted by ascending when specified', () => {
+            return request(app)
+            .get('/api/articles?order=asc')
+            .expect(200)
+            .then(({body}) => {
+                
+                expect(body.articles).toHaveLength(12)
+                expect(body.articles).toBeSortedBy('created_at')
+            })
+        });
+
+        test('responds with articles filtered by topic, sorted by column_name, and in correct order when all are specified ', () => {
+            return request(app)
+            .get('/api/articles?topic=mitch&sort_by=author&order=asc')
+            .expect(200)
+            .then(({body}) => {
+                
+                expect(body.articles).toHaveLength(11)
+                expect(body.articles).toBeSortedBy('author')
+                body.articles.forEach((article) =>{
+
+                    expect(article.topic).toBe('mitch');
+                })
+            })
+        });
+
+        test('responds 200 and an empty array for a topic that does exist but doesnt have any articles yet', () => {
+            return request(app)
+            .get('/api/articles?topic=paper')
+            .expect(200)
+            .then(({body}) => {
+
+                expect(body.articles).toHaveLength(0);
+            })
+        });
+
+        test('responds with 400 error when queried with an invalid topic', () => {
+            return request(app)
+            .get('/api/articles?topic=treees')
+            .expect(404)
+            .then(({body: {msg}}) => {
+                
+                expect(msg).toBe('Invalid topic name used')
+            })
+        });
+
+        test('responds with 400 error when invalid column is used for sort_by', () => {
+            return request(app)
+            .get('/api/articles?sort_by=grandma')
+            .expect(400)
+            .then(({body: {msg}}) => {
+                
+                expect(msg).toBe('Invalid column name to sort by')
+            })
+        });
+
+        test('responds with 400 error when order value is not asc or desc', () => {
+            return request(app)
+            .get('/api/articles?order=grandma')
+            .expect(400)
+            .then(({body: {msg}}) => {
+                
+                expect(msg).toBe('Invalid ordering request')
+            })
+        });
+    }) 
+    
+    describe('GET /api/articles/:article_id (comment count)', () => {
         test('responds with article of a given ID with count of comments associated with that article', () => {
             return request(app)
             .get('/api/articles/3')
