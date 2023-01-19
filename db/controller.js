@@ -15,9 +15,9 @@ const getTopics = (request, response, next) => {
 }
 
 const getArticles = (request, response, next) => {
-    const{topic} = request.query
+    const{topic, sort_by, order} = request.query
 
-    retrieveArticles(topic).then((articles) => {
+    retrieveArticles(topic, sort_by, order).then((articles) => {
 
         response.status(200).send({articles: articles})
     })

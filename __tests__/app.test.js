@@ -318,5 +318,84 @@ describe('app.js test suite', () => {
                 })
             })
         });
+
+        test('responds with articles sorted by specified column', () => {
+            return request(app)
+            .get('/api/articles?sort_by=author')
+            .expect(200)
+            .then(({body}) => {
+                
+                expect(body.articles).toHaveLength(12)
+                expect(body.articles).toBeSortedBy('author', {
+                    descending: true
+                })
+            })
+        });
+
+        test('responds with articles sorted by ascending when specified', () => {
+            return request(app)
+            .get('/api/articles?order=asc')
+            .expect(200)
+            .then(({body}) => {
+                
+                expect(body.articles).toHaveLength(12)
+                expect(body.articles).toBeSortedBy('created_at')
+            })
+        });
+
+        test('responds with articles filtered by topic, sorted by column_name, and in correct order when all are specified ', () => {
+            return request(app)
+            .get('/api/articles?topic=mitch&sort_by=author&order=asc')
+            .expect(200)
+            .then(({body}) => {
+                
+                expect(body.articles).toHaveLength(11)
+                expect(body.articles).toBeSortedBy('author')
+                body.articles.forEach((article) =>{
+
+                    expect(article.topic).toBe('mitch');
+                })
+            })
+        });
+
+        test('responds with 400 error when queried with an invalid topic', () => {
+            return request(app)
+            .get('/api/articles?topic=treees')
+            .expect(400)
+            .then(({body: {msg}}) => {
+                
+                expect(msg).toBe('Invalid topic name used')
+            })
+        });
+
+        test('responds with 404 error when no articles for that topic exist', () => {
+            return request(app)
+            .get('/api/articles?topic=paper')
+            .expect(404)
+            .then(({body: {msg}}) => {
+                
+                expect(msg).toBe('No articles in this topic exist')
+            })
+        });
+
+        test('responds with 400 error when invalid column is used for sort_by', () => {
+            return request(app)
+            .get('/api/articles?sort_by=grandma')
+            .expect(400)
+            .then(({body: {msg}}) => {
+                
+                expect(msg).toBe('Invalid column name to sort by')
+            })
+        });
+
+        test('responds with 400 error when order value is not asc or desc', () => {
+            return request(app)
+            .get('/api/articles?order=grandma')
+            .expect(400)
+            .then(({body: {msg}}) => {
+                
+                expect(msg).toBe('Invalid ordering request')
+            })
+        });
     });
 })
