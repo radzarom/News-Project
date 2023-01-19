@@ -223,6 +223,8 @@ describe('app.js test suite', () => {
             .then(({body: {msg}}) => {
                 
                 expect(msg).toBe('The ID used is not the correct data type')
+            })
+        })
     })
 
     describe('PATCH /api/articles/:article_id', () => {
@@ -298,6 +300,22 @@ describe('app.js test suite', () => {
             .then(({body: {msg}}) => {
 
                 expect(msg).toBe('The article ID is the wrong data type')
+            })
+        });
+    });
+
+    describe('GET /api/articles (queries)', () => {
+        test('responds with articles filtered by topic', () => {
+            return request(app)
+            .get('/api/articles?topic=mitch')
+            .expect(200)
+            .then(({body}) => {
+                
+                expect(body.articles).toHaveLength(11)
+                body.articles.forEach((article) =>{
+
+                    expect(article.topic).toBe('mitch');
+                })
             })
         });
     });

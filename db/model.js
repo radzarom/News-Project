@@ -9,15 +9,29 @@ const retrieveTopics = () => {
     return db.query(sqlQuery).then((results) => results.rows)
 }
 
-const retrieveArticles = () => {
+const retrieveArticles = (topic) => {
+    
+    const queryValues = []
 
-    const sqlQuery = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.article_id) AS INTEGER) AS "comment_count"
+    let sqlQuery = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.article_id) AS INTEGER) AS "comment_count"
                         FROM articles
                         LEFT JOIN comments ON articles.article_id = comments.article_id
-                        GROUP BY articles.article_id
-                        ORDER BY created_at DESC`
+                        `
 
-    return db.query(sqlQuery).then((results) => results.rows)
+    if(topic) {
+        console.log(topic)
+        sqlQuery += ` WHERE articles.topic = $1`;
+        queryValues.push(topic);
+    }
+
+    sqlQuery += ` GROUP BY articles.article_id`
+
+    sqlQuery += ` ORDER BY created_at DESC`
+
+    console.log(sqlQuery);
+    console.log(queryValues);
+
+    return db.query(sqlQuery, queryValues).then((results) => results.rows)
 }
 
 const retrieveArticleByID = (article_id) => {

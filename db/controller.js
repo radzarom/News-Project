@@ -15,8 +15,9 @@ const getTopics = (request, response, next) => {
 }
 
 const getArticles = (request, response, next) => {
+    const{topic} = request.query
 
-    retrieveArticles().then((articles) => {
+    retrieveArticles(topic).then((articles) => {
 
         response.status(200).send({articles: articles})
     })
