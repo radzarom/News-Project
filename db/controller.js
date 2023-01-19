@@ -84,6 +84,10 @@ const getUsers = (request, response, next) => {
 
         response.status(200).send({users: users})
     })
+    .catch((error) => {
+
+        next(error);
+    })
 }
 
 module.exports = {getTopics, getArticles, getArticleByID, getCommentsByArticleID, postCommentByArticleID, patchArticleByID, getUsers}
