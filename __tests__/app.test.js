@@ -296,7 +296,7 @@ describe('app.js test suite', () => {
             .send({
                 inc_votes: 5
             })
-            .expect(404)
+            .expect(400)
             .then(({body: {msg}}) => {
 
                 expect(msg).toBe('The article ID is the wrong data type')
@@ -452,6 +452,16 @@ describe('app.js test suite', () => {
             .then(({body: {msg}}) => {
 
                 expect(msg).toBe('Could not delete comment with this ID as it did not exist')
+            })
+        });
+
+        test('responds with 400 error if comment ID is wrong data type', () => {
+            return request(app)
+            .delete('/api/comments/abc')
+            .expect(400)
+            .then(({body: {msg}}) => {
+
+                expect(msg).toBe('Comment ID is the wrong data type')
             })
         });
     });
