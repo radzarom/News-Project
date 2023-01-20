@@ -473,8 +473,6 @@ describe('app.js test suite', () => {
             .expect(200)
             .then(({body: endpoints}) => {
 
-                console.log(endpoints);
-
                 expect(endpoints).toMatchObject({
                     "GET /api/topics": expect.any(Object),
                     "GET /api/articles": expect.any(Object),

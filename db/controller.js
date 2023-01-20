@@ -106,10 +106,7 @@ const deleteCommentByID = (request, response, next) => {
 
 const getAPI = (request, response, next) => {
 
-    
-
     response.status(200).send(endpoints)
-    
 }
 
 module.exports = {getTopics, getArticles, getArticleByID, getCommentsByArticleID, postCommentByArticleID, patchArticleByID, getUsers, deleteCommentByID, getAPI}
