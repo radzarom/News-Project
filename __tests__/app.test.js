@@ -296,7 +296,7 @@ describe('app.js test suite', () => {
             .send({
                 inc_votes: 5
             })
-            .expect(404)
+            .expect(400)
             .then(({body: {msg}}) => {
 
                 expect(msg).toBe('The article ID is the wrong data type')
@@ -423,6 +423,45 @@ describe('app.js test suite', () => {
             .then(({body}) => {
 
                 expect(body.article).toHaveProperty('comment_count', 2)
+            })
+        });
+    });
+
+    describe('DELETE /api/comments/:comment_id', () => {
+        test('responds with status 204 and no content, and removes comment from DB', () => {
+            return request(app)
+            .delete('/api/comments/2')
+            .expect(204)
+            .then(() => {
+
+                return request(app)
+                    .get('/api/articles/1/comments')
+                    .expect(200)
+                    .then(({body: {comments}}) => {
+
+                        const numberOf = comments.filter((comment) => comment.comment_id === 2)
+                        expect(numberOf.length).toBe(0);
+                    })
+            })
+        });
+
+        test('responds with 404 if the comment did not exist to be deleted', () => {
+            return request(app)
+            .delete('/api/comments/200')
+            .expect(404)
+            .then(({body: {msg}}) => {
+
+                expect(msg).toBe('Could not delete comment with this ID as it did not exist')
+            })
+        });
+
+        test('responds with 400 error if comment ID is wrong data type', () => {
+            return request(app)
+            .delete('/api/comments/abc')
+            .expect(400)
+            .then(({body: {msg}}) => {
+
+                expect(msg).toBe('Comment ID is the wrong data type')
             })
         });
     });
