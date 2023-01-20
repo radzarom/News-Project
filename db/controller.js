@@ -1,6 +1,6 @@
 const {retrieveTopics, retrieveArticles, retrieveArticleByID, retrieveCommentsByArticleID, addCommentByID, updateArticleByID, retrieveUsers, removeCommentByID} = require(`${__dirname}/model.js`)
 
-
+const endpoints = require(`${__dirname}/../endpoints.json`)
 
 
 const getTopics = (request, response, next) => {
@@ -18,7 +18,7 @@ const getArticles = (request, response, next) => {
     const{topic, sort_by, order} = request.query
 
     retrieveArticles(topic, sort_by, order).then((articles) => {
-
+        
         response.status(200).send({articles: articles})
     })
     .catch((err) => {
@@ -104,6 +104,14 @@ const deleteCommentByID = (request, response, next) => {
     })
 }
 
-module.exports = {getTopics, getArticles, getArticleByID, getCommentsByArticleID, postCommentByArticleID, patchArticleByID, getUsers, deleteCommentByID}
+const getAPI = (request, response, next) => {
+
+    
+
+    response.status(200).send(endpoints)
+    
+}
+
+module.exports = {getTopics, getArticles, getArticleByID, getCommentsByArticleID, postCommentByArticleID, patchArticleByID, getUsers, deleteCommentByID, getAPI}
 
 

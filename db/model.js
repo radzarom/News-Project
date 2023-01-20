@@ -2,6 +2,7 @@ const db = require(`${__dirname}/connection.js`)
 const format = require('pg-format')
 
 
+
 const retrieveTopics = () => {
 
     const sqlQuery = 'SELECT slug, description FROM topics'
@@ -81,7 +82,7 @@ const retrieveCommentsByArticleID = (article_id) => {
 
             return Promise.reject({status: 404, msg: 'There are no comments for this article or no such article exists'})
         }
-        
+
         return results.rows
     })
 }
