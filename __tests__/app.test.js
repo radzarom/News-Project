@@ -118,6 +118,17 @@ describe('app.js test suite', () => {
                 })       
             })
         });
+
+        test('responds with an array of comments for a given article ID in date descending', () => {
+            return request(app)
+            .get('/api/articles/1/comments')
+            .expect(200)
+            .then(({body: {comments}}) => {
+                expect(comments).toBeSortedBy('created_at', {
+                    descending: true
+                })
+            })
+        });
         
         test('responds with 404 error if the article has no comments', () => {
             return request(app)
@@ -359,13 +370,13 @@ describe('app.js test suite', () => {
             })
         });
 
-        test('responds with articles filtered by topic, sorted by column_name, and in correct order when all are specified ', () => {
+        test('responds with articles filtered by topic, sorted by column_name, in correct order and limited to 5 when all are specified ', () => {
             return request(app)
-            .get('/api/articles?topic=mitch&sort_by=author&order=asc')
+            .get('/api/articles?topic=mitch&sort_by=author&order=asc&limit=5')
             .expect(200)
             .then(({body}) => {
                 
-                expect(body.articles).toHaveLength(11)
+                expect(body.articles).toHaveLength(5)
                 expect(body.articles).toBeSortedBy('author')
                 body.articles.forEach((article) =>{
 

@@ -10,7 +10,9 @@ const retrieveTopics = () => {
     return db.query(sqlQuery).then((results) => results.rows)
 }
 
-const retrieveArticles = (topic, sort_by = 'created_at', order = 'desc') => {
+const retrieveArticles = (topic, sort_by = 'created_at', order = 'desc', limit = 0) => {
+
+    const limitConvert = Number(limit)
 
     const columnWhiteList = ['author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'article_img_url']
     const orderWhiteList = ['asc', 'desc', 'ASC', 'DESC']
@@ -21,6 +23,10 @@ const retrieveArticles = (topic, sort_by = 'created_at', order = 'desc') => {
 
     if(!orderWhiteList.includes(order)) {
         return Promise.reject({status:400, msg: 'Invalid ordering request'})
+    }
+
+    if(typeof limitConvert != 'number' || isNaN(limitConvert)) {
+        return Promise.reject({status:400, msg: 'Invalid limit, must me number'})
     }
     
     let sqlQuery = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.article_id) AS INTEGER) AS "comment_count"
@@ -43,6 +49,10 @@ const retrieveArticles = (topic, sort_by = 'created_at', order = 'desc') => {
         }
         sqlQuery += ` GROUP BY articles.article_id`
         sqlQuery += ` ORDER BY ${sort_by} ${order}`
+
+        if(limitConvert > 0) {
+            sqlQuery += ` LIMIT ${limitConvert}`
+        }
         
         return db.query(sqlQuery, queryValues).then((results) => {
             
@@ -74,7 +84,8 @@ const retrieveArticleByID = (article_id) => {
 const retrieveCommentsByArticleID = (article_id) => {
 
     const sqlQuery = `SELECT * FROM comments
-                        WHERE article_id = $1`
+                        WHERE article_id = $1
+                        ORDER BY created_at DESC`
 
     return db.query(sqlQuery, [article_id]).then((results) => {
 
