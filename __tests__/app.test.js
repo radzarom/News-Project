@@ -129,17 +129,6 @@ describe('app.js test suite', () => {
                 })
             })
         });
-        
-        test('responds with 404 error if the article has no comments', () => {
-            return request(app)
-            .get('/api/articles/4/comments')
-            .expect(404)
-            .then(({body: {msg}}) => {
-                
-                expect(msg).toBe('There are no comments for this article or no such article exists')
-
-            })
-        })
 
     }) 
 

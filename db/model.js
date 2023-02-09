@@ -89,11 +89,6 @@ const retrieveCommentsByArticleID = (article_id) => {
 
     return db.query(sqlQuery, [article_id]).then((results) => {
 
-        if(results.rows.length === 0) {
-
-            return Promise.reject({status: 404, msg: 'There are no comments for this article or no such article exists'})
-        }
-
         return results.rows
     })
 }
