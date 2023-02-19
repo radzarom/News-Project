@@ -8,6 +8,8 @@ The page loads with default error message when the path is not specified.
 
 Please append the URL to test various endpoints, e.g. /api/articles?sort_by=created_at
 
+Append with /api to see a list of available endpoints and descriptions.
+
 
 ## Summary
 
