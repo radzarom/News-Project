@@ -14,7 +14,7 @@ const retrieveArticles = (topic, sort_by = 'created_at', order = 'desc', limit =
 
     const limitConvert = Number(limit)
 
-    const columnWhiteList = ['author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'article_img_url']
+    const columnWhiteList = ['author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'article_img_url', 'comment_count']
     const orderWhiteList = ['asc', 'desc', 'ASC', 'DESC']
 
     if(!columnWhiteList.includes(sort_by)) {
